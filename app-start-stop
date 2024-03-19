@@ -70,7 +70,7 @@ pipeline {
 					}
 					steps {
 						script{
-							try {
+							//try {
 								println "Performing "+ action +" on application SOM"								
 								//def serverdetails = readJSON file: 'SOM.json'
 								def serverdetails = readJSON file: 'Patching_cycle_13/SOM_test.json'
@@ -92,12 +92,12 @@ pipeline {
 								//def result = performaction(haproxyservers, backend, server, action, sockfileloc )				
 								publishresults = publishresults + "SOM: " + result+ "\n"
 								
-							}catch(Exception e) {
+							/*}catch(Exception e) {
 								SOM ='Failed'
 								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 								sh "exit 1"
 								}
-							}
+							}*/
 						}
 					}      
 				}
