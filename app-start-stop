@@ -72,8 +72,8 @@ pipeline {
 						script{
 							//try {
 								println "Performing "+ action +" on application SOM"								
-								//def serverdetails = readJSON file: 'SOM.json'
-								def serverdetails = readJSON file: 'Patching_cycle_13/SOM_test.json'
+								def serverdetails = readJSON file: 'SOM.json'
+								//def serverdetails = readJSON file: 'Patching_cycle_13/SOM_test.json'
 								def haproxyservers = serverdetails.HAPROXY_SERVERS 
 								def nceserver = serverdetails.SOM_NCE_SERVERS
 								def ncwserver = serverdetails.SOM_NCW_SERVERS
