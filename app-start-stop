@@ -91,7 +91,7 @@ pipeline {
 							}
 										
 							println microservicesandport
-							def output = performactiononsom(haproxyservers, microservicesandport, server, 'status', 'data/var' )
+							def output = performactiononsom(haproxyservers, microservicesandport, server, action, sockfileloc )
 							// To Do : code for www-som-globalleadmanagementprocess-ssl
 						}
 					}      
