@@ -70,34 +70,29 @@ pipeline {
 					}
 					steps {
 						script{
-							//try {
-								println "Performing "+ action +" on application SOM"								
-								def serverdetails = readJSON file: 'SOM.json'
-								//def serverdetails = readJSON file: 'Patching_cycle_13/SOM_test.json'
-								def haproxyservers = serverdetails.HAPROXY_SERVERS 
-								def nceserver = serverdetails.SOM_NCE_SERVERS
-								def ncwserver = serverdetails.SOM_NCW_SERVERS
-								def backend = serverdetails.MICROSVCS
-								def sockfileloc = serverdetails.SOCKFILE
-								def server
-								println backend
-								if(datacenter =='NCE'){
-									 server = nceserver
-									 println "NCE server are: " + server
-								}
-								else if(datacenter =='NCW'){
-									server = ncwserver
-									println "NCW server are: " + server
-								}
-								//def result = performaction(haproxyservers, backend, server, action, sockfileloc )				
-								publishresults = publishresults + "SOM: " + result+ "\n"
-								
-							/*}catch(Exception e) {
-								SOM ='Failed'
-								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-								sh "exit 1"
-								}
-							}*/
+							println "hello stage"								
+							def serverdetails = readJSON file: 'SOM.json'
+							//def serverdetails = readJSON file: 'Patching_cycle_13/SOM_test.json'
+							def haproxyservers = serverdetails.HAPROXY_SERVERS 
+							def nceserver = serverdetails.SOM_NCE_SERVERS
+							def ncwserver = serverdetails.SOM_NCW_SERVERS
+							def microservicesandport = serverdetails.MICROSVCS
+							def sockfileloc = serverdetails.SOCKFILE
+							def server
+
+							
+							if(datacenter =='NCE'){
+								 server = nceserver
+								 println "NCE server are: " + server
+							}
+							else if(datacenter =='NCW'){
+								server = ncwserver
+								println "NCW server are: " + server
+							}
+										
+							println microservicesandport
+							def output = performactiononsom(haproxyservers, microservicesandport, server, 'status', 'data/var' )
+							// To Do : code for www-som-globalleadmanagementprocess-ssl
 						}
 					}      
 				}
@@ -187,3 +182,30 @@ def performaction(Object haproxyservers, Object backend, Object server, String a
 	}
 	return result
 }
+def performactiononsom(Object haproxyservers, Object microservicesandport, Object server, String action, Object sockfileloc ){
+	def somresult ='Success'
+	def backend
+	def portarray
+	for(ha in haproxyservers) {
+		def SSH_OPTION="ssh jenkins_worker@${ha} -o StrictHostKeyChecking=no"
+		for(def msp in microservicesandport){
+			backend =msp.key
+			for(port in msp.value){
+				for(s in server) {
+					println "backend: " + " " + backend + " " + "port: " + " " + port + " " + "haproxy: " + " " + ha
+					def servername = s+'-'+port	
+					println servername
+					echo "$SSH_OPTION 'echo $action server $backend/$servername | sudo socat stdio $sockfileloc'"
+					try{
+						//sh "$SSH_OPTION 'echo $action server $bknd/$s | sudo socat stdio $sockfileloc'"
+					}catch(Exception e) {
+						somresult ='Failure'	
+						catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+							sh "exit 1"
+						}
+					}
+				}
+			}
+		}
+	}
+return somresult
