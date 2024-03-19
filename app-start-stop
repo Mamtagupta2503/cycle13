@@ -209,3 +209,4 @@ def performactiononsom(Object haproxyservers, Object microservicesandport, Objec
 		}
 	}
 return somresult
+}
