@@ -80,7 +80,7 @@ pipeline {
 								def backend = serverdetails.MICROSVCS
 								def sockfileloc = serverdetails.SOCKFILE
 								def server
-								prinltn backend
+								println backend
 								if(datacenter =='NCE'){
 									 server = nceserver
 									 println "NCE server are: " + server
