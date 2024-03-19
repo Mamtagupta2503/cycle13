@@ -186,6 +186,7 @@ def performactiononsom(Object haproxyservers, Object microservicesandport, Objec
 	def somresult ='Success'
 	def backend
 	def portarray
+	def command 
 	for(ha in haproxyservers) {
 		def SSH_OPTION="ssh jenkins_worker@${ha} -o StrictHostKeyChecking=no"
 		for(def msp in microservicesandport){
@@ -197,7 +198,9 @@ def performactiononsom(Object haproxyservers, Object microservicesandport, Objec
 					println servername
 					echo "$SSH_OPTION 'echo $action server $backend/$servername | sudo socat stdio $sockfileloc'"
 					try{
+						command = command + ";" + "'echo $action server $backend/$servername | sudo socat stdio $sockfileloc'"
 						//sh "$SSH_OPTION 'echo $action server $bknd/$s | sudo socat stdio $sockfileloc'"
+						//sh "$SSH_OPTION" command
 					}catch(Exception e) {
 						somresult ='Failure'	
 						catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
@@ -207,6 +210,8 @@ def performactiononsom(Object haproxyservers, Object microservicesandport, Objec
 				}
 			}
 		}
+		println command
+		echo "$SSH_OPTION $command"
 	}
 return somresult
 }
