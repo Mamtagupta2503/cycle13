@@ -1,1 +1,38 @@
-
+{
+    "HAPROXY_SERVERS": [
+        "api-haproxy1-prod.ncw.webapps.rr.com",
+        "api-haproxy2-prod.ncw.webapps.rr.com",
+        "api-haproxy1-prod.nce.webapps.rr.com",
+        "api-haproxy2-prod.nce.webapps.rr.com"
+    ],
+    "SOM_NCE_SERVERS": [
+        "somprod0001",
+        "somprod0002",
+        "somprod0003",
+        "somprod0004"
+    ],
+    "SOM_NCW_SERVERS": [
+        "somdr0001",
+        "somdr0002",
+        "somdr0003",
+        "somdr0004"
+    ],
+    "MICROSVCS": {
+        "test1": [
+            11,
+            12,
+            13
+        ],
+        "test2": [
+            21,
+            22,
+            23
+        ],
+        "test3": [
+            31,
+            32,
+            33
+        ]
+    },
+    "SOCKFILE": "/data/apps/haproxy/haproxy_sock"
+}
