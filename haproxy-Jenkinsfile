@@ -34,7 +34,7 @@ pipeline {
 						script{
 							try {
 								println "Performing "+ action +" on application CSS"								
-								def serverDetails = readJSON file: 'Patching_cycle_13/data/CSS.json'
+								def serverDetails = readJSON file: 'CSS.json'
 								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
 								def CSSNCEServer = serverDetails.CSS_NCE_SERVERS
 								def CSSNCWServer = serverDetails.CSS_NCW_SERVERS
@@ -102,7 +102,7 @@ pipeline {
 						script{
 							//try {
 								println "Performing "+ action +" on application SOM"								
-								def serverDetails = readJSON file: 'Patching_cycle_13/data/SOM.json'
+								def serverDetails = readJSON file: 'SOM.json'
 								println "read success"
 								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
 								def nceserver = serverDetails.SOM_NCE_SERVERS
@@ -156,7 +156,7 @@ pipeline {
 					script{
 						try {
 							println "Performing "+ action +" on application Phantom"
-							def serverDetails = readJSON file: 'Patching_cycle_13/data/Phantom.json'
+							def serverDetails = readJSON file: 'Phantom.json'
 							def HAProxyServers = serverDetails.HAPROXY_SERVERS 
 							def nceserver = serverDetails.PHANTOM_NCE_SERVERS
 							def ncwserver = serverDetails.PHANTOM_NCW_SERVERS
