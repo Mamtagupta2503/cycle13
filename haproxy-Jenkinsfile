@@ -164,9 +164,9 @@ pipeline {
 							def UINCWServer= serverdetails.UI_NCW_SERVERS
 							def backendWithPort = serverDetails.BACKEND_PORT
 							def sockFileLoc = serverDetails.SOCKFILE
-							def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
-							def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
-							def backendWithPortFromParamArray = Arrays.asList((backendWithPortFromParam).split(","))
+							//def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+							//def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+							//def backendWithPortFromParamArray = Arrays.asList((backendWithPortFromParam).split(","))
 							def server
 							def UIServer
 							def UI_BACKEND_PORT
@@ -186,12 +186,13 @@ pipeline {
 							}
 							else 
 							{	
-								server = backendServersFromParamArray
+								/*server = backendServersFromParamArray
 								UIServer =
 								HAProxyServers = haproxyFromParamArray
 								backendWithPort =backendWithPortFromParamArray
 								println "HAProxy server selected from parameter: " + haproxyFromParamArray
-								println "backend server selected from parameter: " + server
+								println "backend server selected from parameter: " + server*/
+								prinltn "in else statement"
 							}
 							
 							def phantomResult = performAction(HAProxyServers, backendWithPort, server, action, sockFileLoc )
