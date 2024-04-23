@@ -98,7 +98,7 @@ def performAction(Object haproxyservers, Object backendWithPort, Object server, 
 	def result ='Success'
 	def backend
 	def portarray
-	prinltn "mamta"
+	println "mamta"
 	for(ha in haproxyservers) {
 		def SSH_OPTION="ssh jenkins_worker@${ha} -o StrictHostKeyChecking=no"
 		for(def bwp in backendWithPort)
