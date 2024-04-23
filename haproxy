@@ -1,0 +1,267 @@
+def application =params.Application
+def action =params.Action
+def datacenter =params.DC
+def haproxyFromParam= params.haproxy
+def backendFromParam =params.backend
+def backendServersFromParam = params.backend_server
+def backendWithPortFromParam= params.backend_port
+def publishResults=''
+def cause = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
+
+pipeline {
+    agent any
+
+    stages {
+
+		stage('Parallel execution') {
+			parallel {
+				stage('Job parameters'){
+				steps {
+						script{
+							println "application : " + application
+							println "Action : " + action
+							println "datacenter : " + datacenter
+						}
+					}	
+				}
+				stage('CSS') {
+					when {
+						expression {
+						'CSS' in application||'ALL' in application
+						}
+					}
+					steps {
+						script{
+							try {
+								println "Performing "+ action +" on application CSS"								
+								def serverDetails = readJSON file: 'Patching_cycle_13/data/CSS.json'
+								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
+								def CSSNCEServer = serverDetails.CSS_NCE_SERVERS
+								def CSSNCWServer = serverDetails.CSS_NCW_SERVERS
+								def GPDNCEServer = serverDetails.GPD_NCE_SERVERS
+								def GPDNCWServer = serverDetails.GPD_NCW_SERVERS
+								def backendWithPort = serverDetails.BACKEND_PORT
+								def sockFileLoc = serverDetails.SOCKFILE
+								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+								def server
+								def backendWithPortFromParamArray = Arrays.asList((backendWithPortFromParam).split(","))
+								
+								def CSSServer
+								def GPDServer
+								def ParamServer
+								
+								if(application =='ALL') {
+									if(datacenter =='NCE'){
+										 CSSServer = CSSNCEServer
+										 GPDServer = GPDNCEServer
+										 println "NCE CSS server: " + CSSNCEServer
+										 println "NCE GPD server: " + GPDNCEServer
+									}
+									else if(datacenter =='NCW'){
+										CSSServer = CSSNCWServer
+										GPDServer = GPDNCWServer
+										println "NCW server are: " + CSSNCWServer
+										println "NCW GPD server: " + GPDNCWServer
+									}
+								}	
+								else 
+								{	
+									CSSServer = backendServersFromParamArray
+									HAProxyServers = haproxyFromParamArray
+									println "HAProxy server selected from parameter: " + haproxyFromParamArray
+									println "backend server selected from parameter: " + CSSServer
+									
+								}
+								
+								def CSSResult =performAction(HAProxyServers, backendWithPort, CSSServer, action, sockFileLoc )
+								def GPDResult =performAction(HAProxyServers, backendWithPort, GPDServer, action, sockFileLoc )
+								
+								publishResults = publishResults + "CSS: " + CSSResult+ "\n"
+								publishResults = publishResults + "GPD: " + GPDResult+ "\n"
+									
+									
+							}catch(Exception e) {
+								result ='Failed'
+								publishResults = publishResults + "CSS: " + CSSResult+ "\n"
+								publishResults = publishResults + "GPD: " + GPDResult+ "\n"
+								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+								sh "exit 1"
+								}
+							}
+						}
+					}      
+				}
+				stage('SOM') {
+					when {
+						expression {
+						'SOM' in application||'ALL' in application
+						}
+					}
+					steps {
+						script{
+							try {
+								println "Performing "+ action +" on application SOM"								
+								def serverDetails = readJSON file: 'Patching_cycle_13/data/SOM.json'
+								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
+								def nceserver = serverDetails.SOM_NCE_SERVERS
+								def ncwserver = serverDetails.SOM_NCW_SERVERS
+								def backendWithPort = serverDetails.BACKEND_PORT
+								def sockFileLoc = serverDetails.SOCKFILE
+								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+								def server
+								def backendWithPortFromParamArray = Arrays.asList((backendWithPortFromParam).split(","))
+								
+
+								if(application =='ALL') {
+									if(datacenter =='NCE'){
+										 server = nceserver
+										 println "NCE server are: " + server
+									}
+									else if(datacenter =='NCW'){
+										server = ncwserver
+										println "NCW server are: " + server
+									}
+								}	
+								else 
+								{	
+									server = backendServersFromParamArray
+									HAProxyServers = haproxyFromParamArray
+									backendWithPort =backendWithPortFromParamArray
+									println "HAProxy server selected from parameter: " + haproxyFromParamArray
+									println "backend server selected from parameter: " + server
+								}
+								def result = performAction(HAProxyServers, backendWithPort, server, action, sockFileLoc )				
+								publishResults = publishResults + "SOM: " + result+ "\n"
+								
+							}catch(Exception e) {
+								result ='Failed'
+								publishResults = publishResults + "SOM: " + result+ "\n"
+								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+								sh "exit 1"
+								}
+							}
+						}
+					}      
+				}
+				stage('Phantom') {
+					when {
+						expression {
+						'Phantom' in application||'ALL' in application
+						}
+					}
+				steps {
+					script{
+						try {
+							println "Performing "+ action +" on application Phantom"
+							def serverDetails = readJSON file: 'Patching_cycle_13/data/Phantom.json'
+							def HAProxyServers = serverDetails.HAPROXY_SERVERS 
+							def nceserver = serverDetails.PHANTOM_NCE_SERVERS
+							def ncwserver = serverDetails.PHANTOM_NCW_SERVERS
+							def UINNCEServer= serverdetails.UI_NCE_SERVERS
+							def UINCWServer= serverdetails.UI_NCW_SERVERS
+							def backendWithPort = serverDetails.BACKEND_PORT
+							def sockFileLoc = serverDetails.SOCKFILE
+							def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+							def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+							def backendWithPortFromParamArray = Arrays.asList((backendWithPortFromParam).split(","))
+							def server
+							def UIServer
+							def UI_BACKEND_PORT
+							
+
+							if(application =='ALL') {
+								if(datacenter =='NCE'){
+									server = nceserver
+									UIServer =UINNCEServer
+									println "NCE server are: " + server
+								}
+								else if(datacenter =='NCW'){
+									server = ncwserver
+									UIServer =UINCWServer
+									println "NCW server are: " + server
+								}
+							}
+							else 
+							{	
+								server = backendServersFromParamArray
+								UIServer =
+								HAProxyServers = haproxyFromParamArray
+								backendWithPort =backendWithPortFromParamArray
+								println "HAProxy server selected from parameter: " + haproxyFromParamArray
+								println "backend server selected from parameter: " + server
+							}
+							
+							def phantomResult = performAction(HAProxyServers, backendWithPort, server, action, sockFileLoc )
+							//def UIResult = performAction(HAProxyServers, backendWithPort, UIServer, action, sockFileLoc )		need to confirm backend and write code accrodungly					
+							publishResults = publishResults + "Phantom: " + result+ "\n"
+							
+						}catch(Exception e) {
+							result ='Failed'
+							publishResults = publishResults + "Phantom: " + result+ "\n"
+							catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+								sh "exit 1"
+							}
+						}
+					}      
+				}
+			}     
+			}
+		} 
+	}
+    post {
+	always {
+		println publishResults
+		sparkSend credentialsId: 'UnifiedBuyflowSparkBot', 
+		message: " Job URL: ${env.JOB_URL} \n BUILD_NUMBER: ${env.BUILD_NUMBER} \n User: ${cause.userName} \n Application: [${Application}] \n Action: [${action}] \n DC: [${datacenter}] \n Build status: [${currentBuild.currentResult}] \n StageResult: [${publishResults}] ",
+		spaceList: [[spaceId: '21f9d0e0-92b5-11ee-a0f4-6d1d3af5a51f', 
+		spaceName: 'MamtaKT']]
+	}
+} 
+	
+}
+/*def performAction(Object HAProxyServers, Object backend, Object server, String action, Object sockFileLoc ){
+	def result ='Success'
+	for(ha in HAProxyServers) {
+		def SSH_OPTION="ssh jenkins_worker@${ha} -o StrictHostKeyChecking=no"
+		for(bknd in backend) {
+			for(s in server) {
+				//echo "$SSH_OPTION 'echo $action server $bknd/$s | sudo socat stdio $sockFileLoc'"
+				try{
+					sh "$SSH_OPTION 'echo $action server $bknd/$s | sudo socat stdio $sockFileLoc'"
+					
+				}catch(Exception e) {
+					result ='Failure'	
+					catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+						sh "exit 1"
+					}
+				}
+			}
+		}
+	}
+	return result
+}*/
+def performAction(Object haproxyservers, Object backendWithPort, Object server, String action, Object sockfileloc ){
+	def result ='Success'
+	def backend
+	def portarray
+	for(ha in haproxyservers) {
+		def SSH_OPTION="ssh jenkins_worker@${ha} -o StrictHostKeyChecking=no"
+		for(def bwp in backendWithPort)
+		{
+			backend =bwp.key
+			for(port in bwp.value)
+				{
+					for(s in server) {
+						println "backend: " + " " + backend + " " + "port: " + " " + port + " " + "haproxy: " + " " + ha
+						def servername = s+'-'+port	
+						println servername
+						echo "$SSH_OPTION 'echo $action server $backend/$servername | sudo socat stdio $sockfileloc'"
+					}
+				}
+			
+		}
+	}
+	return result
+}
