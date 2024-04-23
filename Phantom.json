@@ -1,0 +1,38 @@
+{
+    "HAPROXY_SERVERS": [
+		"api-haproxy1-prod.ncw.webapps.rr.com",
+		"api-haproxy2-prod.ncw.webapps.rr.com",
+		"api-haproxy1-prod.nce.webapps.rr.com",
+		"api-haproxy2-prod.nce.webapps.rr.com"
+	],
+    "PHANTOM_NCE_SERVERS": 
+		"phantomprod0001",		
+		"phantomprod0002",		
+		"phantomprod0003",		
+		"phantomprod0004"
+    ],
+    "PHANTOM_NCW_SERVERS": [
+		"phantomdr0001",		
+		"phantomdr0002",		
+		"phantomdr0003",		
+		"phantomdr0004" 
+	],
+   "UI_NCE_SERVERS": [
+		"phantomprod0003",
+        "phantomprod0004"
+	],
+  "UI_NCW_SERVERS": [
+		"phantomdr0003",          
+		"phantomdr0004"
+	],
+	
+	"PHANTOM_BACKEND_PORT": {
+		"www-phantom-jvm-ssl":[7110,7112,7114,7116,7118]
+    },
+	"UI_BACKEND_PORT": {
+		"www-phantom-ui-ssl":[7210],
+		"www-phantom-ui-nce-ssl":[7210],
+		"www-phantom-ui-ncw-ssl":[7210]
+    },
+	"SOCKFILE": "/data/apps/haproxy/haproxy_sock"
+}
