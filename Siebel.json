@@ -14,5 +14,12 @@
 		"prod_vm0pwsbldrw0001",
 		"prod_vm0pwsbldrw0002"
 	],
+	"SIEBEL_NCE_BACKEND": [
+		"www-siebel-nce-ssl"
+	],
+
+	"SIEBEL_NCW_BACKEND": [
+		"www-siebel-ncw-ssl"
+	],
 	"SOCKFILE": "/data/apps/haproxy/haproxy_sock"
 }
