@@ -1,7 +1,10 @@
 def application =params.Application
 def action =params.Action
 def datacenter =params.DC
-def publishresults=''
+def haproxyFromParam= params.haproxy
+def backendFromParam =params.backend
+def backendServersFromParam = params.backend_server
+def publishResults=''
 def cause = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
 
 pipeline {
@@ -30,31 +33,53 @@ pipeline {
 						script{
 							try {
 								println "Performing "+ action +" on application CSS"								
-								def serverdetails = readJSON file: 'Patching_cycle_13/CSS_test.json'
-								//def serverdetails = readJSON file: 'CSS.json'
-								def haproxyservers = serverdetails.HAPROXY_SERVERS 
-								def nceserver = serverdetails.HANCESERVERS
-								def ncwserver = serverdetails.HANCWSERVERS
-								def backend = serverdetails.BACKEND
-								def sockfileloc = serverdetails.SOCKFILE
+								def serverDetails = readJSON file: 'CSS.json'
+								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
+								def nceserver = serverDetails.CSS_NCE_SERVERS
+								def ncwserver = serverDetails.CSS_NCW_SERVERS
+								def backend = serverDetails.CSS_BACKENDS
+								def sockFileLoc = serverDetails.SOCKFILE
+								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
 								def server
 								
-			
-								if(datacenter =='NCE'){
-									 server = nceserver
-									 println "NCE server are: " + server
+								if(application =='ALL') {
+									if(datacenter =='NCE'){
+										 server = nceserver
+										 println "NCE server are: " + server
+									}
+									else if(datacenter =='NCW'){
+										server = ncwserver
+										println "NCW server are: " + server
+									}
+								}	
+								else 
+								{	
+									server = backendServersFromParamArray
+									HAProxyServers = haproxyFromParamArray
+									println "HAProxy server selected from parameter: " + haproxyFromParamArray
+									println "backend server selected from parameter: " + server
+									
 								}
-								else if(datacenter =='NCW'){
-									server = ncwserver
-									println "NCW server are: " + server
-								}
-								def CSSresult =performaction(haproxyservers, backend, server, action, sockfileloc )
 								
-								publishresults = publishresults + "CSS: " + result+ "\n"
+								if(action=='Pre-Patching')
+								{	
+									def result =performAction(HAProxyServers, backend, server, 'DRAIN', sockFileLoc )
+								}
+								else if(action=='Post-Patching')
+								{
+									def result =performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
+								}
+								else if(action ='MAINT')
+								{
+									def result =performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
+								}	
+								publishResults = publishResults + "CSS: " + result+ "\n"
 									
 									
 							}catch(Exception e) {
-								CSSresult ='Failed'
+								result ='Failed'
+								publishResults = publishResults + "CSS: " + result+ "\n"
 								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 								sh "exit 1"
 								}
@@ -62,80 +87,125 @@ pipeline {
 						}
 					}      
 				}
-				stage('SOM') {
+				stage('GPD') {
 					when {
 						expression {
-						'SOM' in application||'ALL' in application
+						'GPD' in application||'ALL' in application
 						}
 					}
 					steps {
 						script{
-							println "hello stage"								
-							def serverdetails = readJSON file: 'SOM.json'
-							//def serverdetails = readJSON file: 'Patching_cycle_13/SOM_test.json'
-							def haproxyservers = serverdetails.HAPROXY_SERVERS 
-							def nceserver = serverdetails.SOM_NCE_SERVERS
-							def ncwserver = serverdetails.SOM_NCW_SERVERS
-							def microservicesandport = serverdetails.MICROSVCS
-							def sockfileloc = serverdetails.SOCKFILE
-							def server
+							try {
+								println "Performing "+ action +" on application GPD"								
+								def serverDetails = readJSON file: 'GPD.json'
+								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
+								def nceserver = serverDetails.GPD_NCE_SERVERS
+								def ncwserver = serverDetails.GPD_NCW_SERVERS
+								def backend = serverDetails.GPD_BACKEND
+								def sockFileLoc = serverDetails.SOCKFILE
+								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+								def server
 
-							
-							if(datacenter =='NCE'){
-								 server = nceserver
-								 println "NCE server are: " + server
+								if(application =='ALL') {
+									if(datacenter =='NCE'){
+										 server = nceserver
+										 println "NCE server are: " + server
+									}
+									else if(datacenter =='NCW'){
+										server = ncwserver
+										println "NCW server are: " + server
+									}
+								}	
+								else 
+								{	
+									server = backendServersFromParamArray
+									HAProxyServers = haproxyFromParamArray
+									println "HAProxy server selected from parameter: " + haproxyFromParamArray
+									println "backend server selected from parameter: " + server
+								}
+								if(action=='Pre-Patching')
+								{	
+									def result =performAction(HAProxyServers, backend, server, 'DRAIN', sockFileLoc )
+								}
+								else if(action=='Post-Patching')
+								{
+									def result =performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
+								}
+								else if(action ='MAINT')
+								{
+									def result =performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
+								}					
+								publishResults = publishResults + "GPD: " + result+ "\n"
+								
+							}catch(Exception e) {
+								result ='Failed'
+								publishResults = publishResults + "GPD: " + result+ "\n"
+								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+								sh "exit 1"
+								}
 							}
-							else if(datacenter =='NCW'){
-								server = ncwserver
-								println "NCW server are: " + server
-							}
-										
-							println microservicesandport
-							def output = performactiononsom(haproxyservers, microservicesandport, server, action, sockfileloc )
-							// To Do : code for www-som-globalleadmanagementprocess-ssl
 						}
 					}      
 				}
-				stage('Phantom') {
+				stage('Siebel') {
 					when {
 						expression {
-						'Phantom' in application||'ALL' in application
+						'Siebel' in application||'ALL' in application
 						}
 					}
 				steps {
 					script{
 						try {
-							println "Performing "+ action +" on application Phantom"	
-							//def serverdetails = readJSON file: 'Phantom.json'
-							def serverdetails = readJSON file: 'Patching_cycle_13/Phantom_test.json'
-							def haproxyservers = serverdetails.HAPROXY_SERVERS 
-							def phantomnceserver = serverdetails.PHANTOM_NCE_SERVERS
-							def phantomncwserver = serverdetails.PHANTOM_NCW_SERVERS
-							def uinceserver= serverdetails.UI_NCE_SERVERS
-							def uincwserver= serverdetails.UI_NCW_SERVERS
-							def sockfileloc = serverdetails.SOCKFILE
-							def phantomserver
-							def uiserver
+							println "Performing "+ action +" on application Siebel"
+							def serverDetails = readJSON file: 'Siebel.json'
+							def HAProxyServers = serverDetails.HAPROXY_SERVERS 
+							def nceserver = serverDetails.NCE_SERVERS
+							def ncwserver = serverDetails.NCW_SERVERS
+							def ncebackend= serverDetails.SIEBEL_NCE_SERVERS
+							def ncwbackend= serverDetails.SIEBEL_NCW_SERVERS
+							def sockFileLoc = serverDetails.SOCKFILE
+							def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+							def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+							def server
+							def backend
 
-							if(datacenter =='NCE'){
-								phantomserver = phantomnceserver
-								uiserver =uinceserver
-								println "NCE server are: " + phantomserver
+							if(application =='ALL') {
+								if(datacenter =='NCE'){
+									server = nceserver
+									backend =ncebackend
+									println "NCE server: " + server
+									println "NCE Backend: " + server
+								}
+								else if(datacenter =='NCW'){
+									server = ncwserver
+									backend =ncwbackend
+									println "NCW server: " + server
+									println "NCW Backend: " + server
+								}
 							}
-							else if(datacenter =='NCW'){
-								phantomserver = phantomncwserver
-								uiserver =uincwserver
-								println "Phantom NCW server are: " + phantomserver
+							else 
+							{	
+								server = backendServersFromParamArray
+								HAProxyServers = haproxyFromParamArray
+								println "HAProxy server selected from parameter: " + haproxyFromParamArray
+								println "backend server selected from parameter: " + server
 							}
-							def phantomresult = performaction(haproxyservers, 'www-phantom-jvm-ssl', phantomserver, action, sockfileloc )
-							def uiresult = performaction(haproxyservers, 'www-phantom-ui-ssl', uiserver, action, sockfileloc )
-							// need to check other backend www-phantom-ui-ncw-ssl and www-phantom-ui-nce-ssl
-							publishresults = publishresults + "PhantomJVM: " + phantomresult+ "\n"
-							publishresults = publishresults + "PhantomUI: " + uiresult+ "\n"
+							
+							if(action=='Pre-Patching')
+								{	
+									def result =performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
+								}
+								else if(action=='Post-Patching')
+								{
+									def result =performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
+								}	
+							def result = performAction(HAProxyServers, backend, server, action, sockFileLoc )	
+							publishResults = publishResults + "Siebel: " + result+ "\n"
 							
 						}catch(Exception e) {
-							phantomresult ='Failed'
-							uiresult ='Failed'
+							result ='Failed'
+							publishResults = publishResults + "Siebel: " + result+ "\n"
 							catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 								sh "exit 1"
 							}
@@ -146,30 +216,26 @@ pipeline {
 			}
 		} 
 	}
-	/*post {
+    post {
 	always {
-			println publishresults
-		}
-	}*/
-   /* post {
-	always {
+		println publishResults
 		sparkSend credentialsId: 'UnifiedBuyflowSparkBot', 
-		message: " Job URL: ${env.JOB_URL} \n User: ${cause.userName} \n Application: [${Application}] \n Action: [${action}] \n DC: [${datacenter}] \n Build status: [${currentBuild.currentResult}] \n StageResult: [${publishresults}] ",
-		spaceList: [[spaceId: '21f9d0e0-92b5-11ee-a0f4-6d1d3af5a51f', 
-		spaceName: 'MamtaKT']]  
+		message: " Job URL: ${env.JOB_URL} \n BUILD_NUMBER: ${env.BUILD_NUMBER} \n User: ${cause.userName} \n Application: [${Application}] \n Action: [${action}] \n DC: [${datacenter}] \n Build status: [${currentBuild.currentResult}] \n StageResult: [${publishResults}] ",
+		spaceList: [[spaceId: 'e26bdaf0-e471-11ed-8020-692d324207aa', 
+		spaceName: 'Jenkins Job Status - OPS']]
 	}
-} */
+} 
 	
 }
-def performaction(Object haproxyservers, Object backend, Object server, String action, Object sockfileloc ){
+def performAction(Object HAProxyServers, Object backend, Object server, String action, Object sockFileLoc ){
 	def result ='Success'
-	for(ha in haproxyservers) {
+	for(ha in HAProxyServers) {
 		def SSH_OPTION="ssh jenkins_worker@${ha} -o StrictHostKeyChecking=no"
 		for(bknd in backend) {
 			for(s in server) {
-				echo "$SSH_OPTION 'echo $action server $bknd/$s | sudo socat stdio $sockfileloc'"
+				//echo "$SSH_OPTION 'echo $action server $bknd/$s | sudo socat stdio $sockFileLoc'"
 				try{
-					//sh "$SSH_OPTION 'echo $action server $bknd/$s | sudo socat stdio $sockfileloc'"
+					//sh "$SSH_OPTION 'echo $action server $bknd/$s | sudo socat stdio $sockFileLoc'"
 					
 				}catch(Exception e) {
 					result ='Failure'	
@@ -182,36 +248,4 @@ def performaction(Object haproxyservers, Object backend, Object server, String a
 	}
 	return result
 }
-def performactiononsom(Object haproxyservers, Object microservicesandport, Object server, String action, Object sockfileloc ){
-	def somresult ='Success'
-	def backend
-	def portarray
-	def command 
-	for(ha in haproxyservers) {
-		def SSH_OPTION="ssh jenkins_worker@${ha} -o StrictHostKeyChecking=no"
-		for(def msp in microservicesandport){
-			backend =msp.key
-			for(port in msp.value){
-				for(s in server) {
-					println "backend: " + " " + backend + " " + "port: " + " " + port + " " + "haproxy: " + " " + ha
-					def servername = s+'-'+port	
-					println servername
-					echo "$SSH_OPTION 'echo $action server $backend/$servername | sudo socat stdio $sockfileloc'"
-					try{
-						command = command + ";" + "'echo $action server $backend/$servername | sudo socat stdio $sockfileloc'"
-						//sh "$SSH_OPTION 'echo $action server $bknd/$s | sudo socat stdio $sockfileloc'"
-						//sh "$SSH_OPTION" command
-					}catch(Exception e) {
-						somresult ='Failure'	
-						catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-							sh "exit 1"
-						}
-					}
-				}
-			}
-		}
-		println command
-		echo "$SSH_OPTION $command"
-	}
-return somresult
-}
+
