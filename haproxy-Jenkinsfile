@@ -39,8 +39,8 @@ pipeline {
 								def ncwserver = serverDetails.CSS_NCW_SERVERS
 								def backend = serverDetails.CSS_BACKENDS
 								def sockFileLoc = serverDetails.SOCKFILE
-								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
-								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+								//def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+								//def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
 								def server
 								
 								if(application =='ALL') {
@@ -55,11 +55,11 @@ pipeline {
 								}	
 								else 
 								{	
-									server = backendServersFromParamArray
-									HAProxyServers = haproxyFromParamArray
-									println "HAProxy server selected from parameter: " + haproxyFromParamArray
-									println "backend server selected from parameter: " + server
-									
+									//server = backendServersFromParamArray
+									//HAProxyServers = haproxyFromParamArray
+									//println "HAProxy server selected from parameter: " + haproxyFromParamArray
+									//println "backend server selected from parameter: " + server
+									println "mamta"
 								}
 								
 								if(action=='Pre-Patching')
@@ -103,8 +103,8 @@ pipeline {
 								def ncwserver = serverDetails.GPD_NCW_SERVERS
 								def backend = serverDetails.GPD_BACKEND
 								def sockFileLoc = serverDetails.SOCKFILE
-								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
-								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+								//def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+								//def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
 								def server
 
 								if(application =='ALL') {
@@ -119,10 +119,11 @@ pipeline {
 								}	
 								else 
 								{	
-									server = backendServersFromParamArray
+									/*server = backendServersFromParamArray
 									HAProxyServers = haproxyFromParamArray
 									println "HAProxy server selected from parameter: " + haproxyFromParamArray
-									println "backend server selected from parameter: " + server
+									println "backend server selected from parameter: " + server*/
+									println "mamta"
 								}
 								if(action=='Pre-Patching')
 								{	
@@ -165,8 +166,8 @@ pipeline {
 							def ncebackend= serverDetails.SIEBEL_NCE_SERVERS
 							def ncwbackend= serverDetails.SIEBEL_NCW_SERVERS
 							def sockFileLoc = serverDetails.SOCKFILE
-							def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
-							def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+							//def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+							//def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
 							def server
 							def backend
 
@@ -186,10 +187,11 @@ pipeline {
 							}
 							else 
 							{	
-								server = backendServersFromParamArray
+								/*server = backendServersFromParamArray
 								HAProxyServers = haproxyFromParamArray
 								println "HAProxy server selected from parameter: " + haproxyFromParamArray
-								println "backend server selected from parameter: " + server
+								println "backend server selected from parameter: " + server*/
+								println "mamta"
 							}
 							
 							if(action=='Pre-Patching')
