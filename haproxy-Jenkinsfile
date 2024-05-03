@@ -126,6 +126,7 @@ pipeline {
 									println "mamta"
 								}
 								if(action=='Pre-Patching')
+									
 								{	
 									def result =performAction(HAProxyServers, backend, server, 'DRAIN', sockFileLoc )
 								}
@@ -161,8 +162,8 @@ pipeline {
 							println "Performing "+ action +" on application Siebel"
 							def serverDetails = readJSON file: 'Siebel.json'
 							def HAProxyServers = serverDetails.HAPROXY_SERVERS 
-							def nceserver = serverDetails.NCE_SERVERS
-							def ncwserver = serverDetails.NCW_SERVERS
+							def nceserver = serverDetails.SIEBEL_NCE_SERVERS
+							def ncwserver = serverDetails.SIEBEL_NCW_SERVERS
 							def ncebackend= serverDetails.SIEBEL_NCE_SERVERS
 							def ncwbackend= serverDetails.SIEBEL_NCW_SERVERS
 							def sockFileLoc = serverDetails.SOCKFILE
