@@ -70,7 +70,7 @@ pipeline {
 								{
 									def result =performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
 								}
-								else if(action ='MAINT')
+								else if(action =='MAINT')
 								{
 									def result =performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
 								}	
@@ -132,7 +132,7 @@ pipeline {
 								{
 									def result =performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
 								}
-								else if(action ='MAINT')
+								else if(action =='MAINT')
 								{
 									def result =performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
 								}					
