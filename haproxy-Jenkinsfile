@@ -233,7 +233,7 @@ def performAction(Object HAProxyServers, Object backend, Object server, String a
 		def SSH_OPTION="ssh jenkins_worker@${ha} -o StrictHostKeyChecking=no"
 		for(bknd in backend) {
 			for(s in server) {
-				//echo "$SSH_OPTION 'echo $action server $bknd/$s | sudo socat stdio $sockFileLoc'"
+				println "$SSH_OPTION 'echo $action server $bknd/$s | sudo socat stdio $sockFileLoc'"
 				try{
 					//sh "$SSH_OPTION 'echo $action server $bknd/$s | sudo socat stdio $sockFileLoc'"
 					
