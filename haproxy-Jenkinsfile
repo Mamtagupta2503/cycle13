@@ -35,7 +35,7 @@ pipeline {
 						script{
 							//try {
 								println "Performing "+ action +" on application SOM"								
-								def serverDetails = readJSON file: 'SOM.json'
+								def serverDetails = readJSON file: 'Patching_cycle_13/data/SOM.json'
 								println "read success"
 								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
 								def nceserver = serverDetails.SOM_NCE_SERVERS
@@ -107,10 +107,7 @@ def performAction(Object haproxyservers, Object backendWithPort, Object server, 
 			for(port in bwp.value)
 				{
 					for(s in server) {
-						println "backend: " + " " + backend + " " + "port: " + " " + port + " " + "haproxy: " + " " + ha
-						def servername = s+'-'+port	
-						println servername
-						echo "$SSH_OPTION 'echo $action server $backend/$servername | sudo socat stdio $sockfileloc'"
+						println "$SSH_OPTION 'echo $action server $backend/$servername | sudo socat stdio $sockfileloc'"
 					}
 				}
 			
