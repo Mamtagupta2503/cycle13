@@ -31,7 +31,7 @@ pipeline {
 					}
 					steps {
 						script{
-							try {
+							//try {
 								println "Performing "+ action +" on application CSS"								
 								def serverDetails = readJSON file: 'CSS.json'
 								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
@@ -64,26 +64,26 @@ pipeline {
 								
 								if(action=='Pre-Patching')
 								{	
-									def result =performAction(HAProxyServers, backend, server, 'DRAIN', sockFileLoc )
+									def result = performAction(HAProxyServers, backend, server, 'DRAIN', sockFileLoc )
 								}
-								else if(action=='Post-Patching')
+								else if(action =='Post-Patching')
 								{
-									def result =performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
+									def result = performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
 								}
 								else if(action =='MAINT')
 								{
-									def result =performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
+									def result = performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
 								}	
 								publishResults = publishResults + "CSS: " + result+ "\n"
 									
 									
-							}catch(Exception e) {
+							/*}catch(Exception e) {
 								result ='Failed'
 								publishResults = publishResults + "CSS: " + result+ "\n"
 								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 								sh "exit 1"
 								}
-							}
+							}*/
 						}
 					}      
 				}
@@ -164,8 +164,8 @@ pipeline {
 							def HAProxyServers = serverDetails.HAPROXY_SERVERS 
 							def nceserver = serverDetails.SIEBEL_NCE_SERVERS
 							def ncwserver = serverDetails.SIEBEL_NCW_SERVERS
-							def ncebackend= serverDetails.SIEBEL_NCE_SERVERS
-							def ncwbackend= serverDetails.SIEBEL_NCW_SERVERS
+							def ncebackend= serverDetails.SIEBEL_NCE_BACKEND
+							def ncwbackend= serverDetails.SIEBEL_NCW_BACKEND
 							def sockFileLoc = serverDetails.SOCKFILE
 							//def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
 							//def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
