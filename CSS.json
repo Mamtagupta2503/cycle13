@@ -6,41 +6,40 @@
 	  "142.136.168.37"
     ],
     "CSS_NCE_SERVERS": [
-		"prod_vm0pncssxxa0001_nce",
-		"prod_vm0pncssxxa0002_nce",
-		"prod_vm0pncssxxa0003_nce",
-		"prod_vm0pncssxxa0004_nce",
-		"prod_vm0pncssxxa0005_nce",
-		"prod_vm0pncssxxa0008_nce",
-		
+		"prod_vm0pncssxxa0001_nce_7130",
+		"prod_vm0pncssxxa0001_nce_7131",
+		"prod_vm0pncssxxa0002_nce_7130",
+		"prod_vm0pncssxxa0002_nce_7131",
+		"prod_vm0pncssxxa0003_nce_7130",
+		"prod_vm0pncssxxa0003_nce_7131",
+		"prod_vm0pncssxxa0004_nce_7130",
+		"prod_vm0pncssxxa0004_nce_7131",
+		"prod_vm0pncssxxa0005_nce_7130",
+		"prod_vm0pncssxxa0005_nce_7131",
+		"prod_vm0pncssxxa0008_nce_7130",
+		"prod_vm0pncssxxa0008_nce_7131"	
+		"		
     ],
     "CSS_NCW_SERVERS": [
-		"prod_vm0rncsswla0001_ncw",
-		"prod_vm0rncsswla0002_ncw",
-		"prod_vm0rncsswla0003_ncw",
-		"prod_vm0rncsswla0004_ncw",
-		"prod_vm0rncsswla0005_ncw",
-		"prod_vm0rncsswla0008_ncw"
-    ],
-	"GPD_NCE_SERVERS": [
-		"prod_vm0pncssxxa0006_nce",
-		"prod_vm0pncssxxa0007_nce",
-
-    ],
-    "GPD_NCW_SERVERS": [
-		"prod_vm0rncsswla0006_ncw",
-		"prod_vm0rncsswla0007_ncw"
+		"prod_vm0rncsswla0001_ncw_7130",
+		"prod_vm0rncsswla0001_ncw_7131",
+		"prod_vm0rncsswla0002_ncw_7130",
+		"prod_vm0rncsswla0002_ncw_7131",
+		"prod_vm0rncsswla0003_ncw_7130",
+		"prod_vm0rncsswla0003_ncw_7131",
+		"prod_vm0rncsswla0004_ncw_7130",
+		"prod_vm0rncsswla0004_ncw_7131",
+		"prod_vm0rncsswla0005_ncw_7130",
+		"prod_vm0rncsswla0005_ncw_7131",
+		"prod_vm0rncsswla0008_ncw_7130",
+		"prod_vm0rncsswla0008_ncw_7131"
     ],
 	
-    "CSS_BACKEND_PORT": {
-		"www-css-iu-ssl":[7130,7131],
-		"www-css-ssl":[7130,7131],
-		"www-css-ssl2":[7130,7131]
-    },
-	"GPD_BACKEND_PORT": {
-		"www-gpd-ssl":[7230,7232]
-		
-    },
+    "CSS_BACKENDS": [
+		"www-css-iu-ssl",
+		"www-css-ssl",
+		"www-css-ssl2"
+    ],
     "SOCKFILE": "/data/apps/haproxy/haproxy_sock"
 }
 
