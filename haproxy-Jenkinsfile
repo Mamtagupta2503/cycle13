@@ -208,7 +208,7 @@ pipeline {
 								{
 									result =performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
 								}	
-							def result = performAction(HAProxyServers, backend, server, action, sockFileLoc )	
+								
 							publishResults = publishResults + "Siebel: " + result+ "\n"
 							
 						}catch(Exception e) {
