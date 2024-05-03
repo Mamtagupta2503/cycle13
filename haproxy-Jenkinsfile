@@ -39,6 +39,7 @@ pipeline {
 								def ncwserver = serverDetails.CSS_NCW_SERVERS
 								def backend = serverDetails.CSS_BACKENDS
 								def sockFileLoc = serverDetails.SOCKFILE
+								def result=''
 								//def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
 								//def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
 								def server
@@ -64,15 +65,15 @@ pipeline {
 								
 								if(action=='Pre-Patching')
 								{	
-									def result = performAction(HAProxyServers, backend, server, 'DRAIN', sockFileLoc )
+									result = performAction(HAProxyServers, backend, server, 'DRAIN', sockFileLoc )
 								}
 								else if(action =='Post-Patching')
 								{
-									def result = performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
+									result = performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
 								}
 								else if(action =='MAINT')
 								{
-									def result = performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
+									result = performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
 								}	
 								println "mamta1"
 								println result
@@ -108,6 +109,7 @@ pipeline {
 								//def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
 								//def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
 								def server
+								def result =''
 
 								if(application =='ALL') {
 									if(datacenter =='NCE'){
@@ -130,15 +132,15 @@ pipeline {
 								if(action=='Pre-Patching')
 									
 								{	
-									def result =performAction(HAProxyServers, backend, server, 'DRAIN', sockFileLoc )
+									result =performAction(HAProxyServers, backend, server, 'DRAIN', sockFileLoc )
 								}
 								else if(action=='Post-Patching')
 								{
-									def result =performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
+									result =performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
 								}
 								else if(action =='MAINT')
 								{
-									def result =performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
+									result =performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
 								}					
 								publishResults = publishResults + "GPD: " + result+ "\n"
 								
@@ -173,6 +175,7 @@ pipeline {
 							//def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
 							def server
 							def backend
+							def result
 
 							if(application =='ALL') {
 								if(datacenter =='NCE'){
@@ -199,11 +202,11 @@ pipeline {
 							
 							if(action=='Pre-Patching')
 								{	
-									def result =performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
+									result =performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
 								}
 								else if(action=='Post-Patching')
 								{
-									def result =performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
+									result =performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
 								}	
 							def result = performAction(HAProxyServers, backend, server, action, sockFileLoc )	
 							publishResults = publishResults + "Siebel: " + result+ "\n"
