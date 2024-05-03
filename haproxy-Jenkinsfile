@@ -74,8 +74,10 @@ pipeline {
 								{
 									def result = performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
 								}	
+								println "mamta1"
+								println result
 								publishResults = publishResults + "CSS: " + result+ "\n"
-									
+								println "mamta2"	
 									
 							/*}catch(Exception e) {
 								result ='Failed'
