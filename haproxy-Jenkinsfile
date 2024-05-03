@@ -76,7 +76,7 @@ pipeline {
 								}	
 								println "mamta1"
 								println result
-								publishResults = publishResults + "CSS: " + result+ "\n"
+								publishResults = publishResults + "CSS " + result+ "\n"
 								println "mamta2"	
 									
 							/*}catch(Exception e) {
@@ -233,7 +233,7 @@ pipeline {
 	
 }
 def performAction(Object HAProxyServers, Object backend, Object server, String action, Object sockFileLoc ){
-	def result ='Success'
+	def result =''
 	for(ha in HAProxyServers) {
 		def SSH_OPTION="ssh jenkins_worker@${ha} -o StrictHostKeyChecking=no"
 		for(bknd in backend) {
@@ -241,6 +241,7 @@ def performAction(Object HAProxyServers, Object backend, Object server, String a
 				println "$SSH_OPTION 'echo $action server $bknd/$s | sudo socat stdio $sockFileLoc'"
 				try{
 					//sh "$SSH_OPTION 'echo $action server $bknd/$s | sudo socat stdio $sockFileLoc'"
+					result ='Success'
 					
 				}catch(Exception e) {
 					result ='Failure'	
