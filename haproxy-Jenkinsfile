@@ -107,7 +107,7 @@ def performAction(Object haproxyservers, Object backendWithPort, Object server, 
 			for(port in bwp.value)
 				{
 					for(s in server) {
-						println "$SSH_OPTION 'echo $action server $backend/$servername | sudo socat stdio $sockfileloc'"
+						println "$SSH_OPTION 'echo $action server $backend/$s-$port | sudo socat stdio $sockfileloc'"
 					}
 				}
 			
