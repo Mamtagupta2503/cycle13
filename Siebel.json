@@ -1,18 +1,18 @@
- {
-    "HAPROXY_SERVERS": [
-		  "142.136.81.131",
-		  "142.136.81.130",
-		  "142.136.168.38",
-		  "142.136.168.37"
-    ],
+{
+	"HAPROXY_SERVERS": [
+		"142.136.81.131",
+		"142.136.81.130",
+		"142.136.168.38",
+		"142.136.168.37"
+	],
 	"SIEBEL_NCE_SERVERS": [
 		"prod_VM0PWSBLPRW0001",
 		"prod_VM0PWSBLPRW0002"
-    ],
+	],
 
-    "SIEBEL_NCW_SERVERS": [
+	"SIEBEL_NCW_SERVERS": [
 		"prod_vm0pwsbldrw0001",
 		"prod_vm0pwsbldrw0002"
-    ],
-    "SOCKFILE": "/data/apps/haproxy/haproxy_sock"
+	],
+	"SOCKFILE": "/data/apps/haproxy/haproxy_sock"
 }
