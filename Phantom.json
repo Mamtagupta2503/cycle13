@@ -5,7 +5,7 @@
 		"api-haproxy1-prod.nce.webapps.rr.com",
 		"api-haproxy2-prod.nce.webapps.rr.com"
 	],
-    "PHANTOM_NCE_SERVERS": 
+    "PHANTOM_NCE_SERVERS": [
 		"phantomprod0001-7110",
 		"phantomprod0001-7112",
 		"phantomprod0001-7114",
