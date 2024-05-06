@@ -63,11 +63,11 @@ pipeline {
 									println "mamta"
 								}
 								
-								if(action=='Pre-Patching'||action='DRAIN')
+								if(action=='Pre-Patching'||action=='DRAIN')
 								{	
 									result = performAction(HAProxyServers, backend, server, 'DRAIN', sockFileLoc )
 								}
-								else if(action =='Post-Patching'||||action='READY')
+								else if(action =='Post-Patching'||action=='READY')
 								{
 									result = performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
 								}
