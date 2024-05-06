@@ -238,34 +238,23 @@ pipeline {
 								def nceserver = serverDetails.PHANTOM_NCE_SERVERS
 								def ncwserver = serverDetails.PHANTOM_NCW_SERVERS
 								def phantomBackend =serverDetails.PHANTOM_BACKEND
-								def uinceserver = serverDetails.UI_NCE_SERVERS
-								def uincwserver = serverDetails.UI_NCW_SERVERS
-								def uincebackend =serverDetails.UI_NCE_BACKEND
-								def uincwbackend =serverDetails.UI_NCW_BACKEND
 								def sockFileLoc = serverDetails.SOCKFILE
 								def backendFromParamArray =Arrays.asList((backendFromParam).split(","))
 								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
 								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
 								def phantomserver
-								def uiserver
-								def uibackend
 								def PhantomResult
-								def UIResult
-
+								
 								if(application =='ALL'||(application =='Phantom' && haproxyFromParam =='ALL' && backendFromParam=='ALL'&& backendServersFromParam =='ALL')){
 									if(datacenter =='NCE'){
 										phantomserver = nceserver
-										uiserver = uinceserver
-										uibackend =uincebackend
-										println "NCE server: " + phantomserver + "Phantom UI NCE Server: " + uiserver + "UI NCE Backend: " +uibackend
+										println "NCE server: " + phantomserver 
 										
 
 									}
 									else if(datacenter =='NCW'){
 										phantomserver = ncwserver
-										uiserver = uincwserver
-										uibackend =uincwbackend
-										println "NCW server: " + phantomserver + "Phantom UI NCW Server: " + uiserver + "UI NCW Backend: " +uibackend
+										println "NCW server: " + phantomserver
 									}
 								}
 								else 
@@ -281,20 +270,84 @@ pipeline {
 								if(action=='Pre-Patching'||action=='disable')
 									{	
 										PhantomResult =performAction(HAProxyServers, phantomBackend, phantomserver, 'disable', sockFileLoc )
-										UIResult =performAction(HAProxyServers, uibackend, uiserver, 'disable', sockFileLoc )
 									}
 									else if(action=='Post-Patching'||action=='enable')
 									{
 										PhantomResult =performAction(HAProxyServers, phantomBackend, phantomserver, 'enable', sockFileLoc )
-										UIResult =performAction(HAProxyServers, uibackend, uiserver, 'enable', sockFileLoc )
 									}	
 									
 								publishResults = publishResults + "Phantom: " + PhantomResult+ "\n"
-								publishResults = publishResults + "Phantom UI: " + UIResult+ "\n"
 								
 							}catch(Exception e) {
 								PhantomResult ='Failed'
 								publishResults = publishResults + "Phantom: " + PhantomResult+ "\n"
+								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+									sh "exit 1"
+								}
+							}
+						}      
+					}
+				}
+				stage('Phantom UI') {
+					when {
+						expression {
+						'PhantomUI' in application||'ALL' in application
+						}
+					}
+					steps {
+						script{
+							try {
+								println "Performing "+ action +" on application PhantomUI"
+								def serverDetails = readJSON file: 'Phantom.json'
+								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
+								def uinceserver = serverDetails.UI_NCE_SERVERS
+								def uincwserver = serverDetails.UI_NCW_SERVERS
+								def uincebackend =serverDetails.UI_NCE_BACKEND
+								def uincwbackend =serverDetails.UI_NCW_BACKEND
+								def sockFileLoc = serverDetails.SOCKFILE
+								def backendFromParamArray =Arrays.asList((backendFromParam).split(","))
+								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+								def uiserver
+								def uibackend
+								def UIResult
+
+								if(application =='ALL'||(application =='PhantomUI' && haproxyFromParam =='ALL' && backendFromParam=='ALL'&& backendServersFromParam =='ALL')){
+									if(datacenter =='NCE'){
+										uiserver = uinceserver
+										uibackend =uincebackend
+										println "Phantom UI NCE Server: " + uiserver + "UI NCE Backend: " +uibackend
+										
+
+									}
+									else if(datacenter =='NCW'){
+										uiserver = uincwserver
+										uibackend =uincwbackend
+										println "Phantom UI NCW Server: " + uiserver + "UI NCW Backend: " +uibackend
+									}
+								}
+								else 
+								{	
+									HAProxyServers = haproxyFromParamArray
+									server = backendServersFromParamArray
+									backend = backendFromParamArray
+									println "HAProxy server selected from parameter: " + HAProxyServers
+									println "backend selected from parameter: " + backend
+									println "backend server selected from parameter: " + server
+								}
+								
+								if(action=='Pre-Patching'||action=='disable')
+									{	
+										UIResult =performAction(HAProxyServers, uibackend, uiserver, 'disable', sockFileLoc )
+									}
+									else if(action=='Post-Patching'||action=='enable')
+									{
+										UIResult =performAction(HAProxyServers, uibackend, uiserver, 'enable', sockFileLoc )
+									}	
+									
+								publishResults = publishResults + "Phantom UI: " + UIResult+ "\n"
+								
+							}catch(Exception e) {
 								UIResult ='Failed'
 								publishResults = publishResults + "Phantom: " + UIResult+ "\n"
 								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
@@ -303,7 +356,7 @@ pipeline {
 							}
 						}      
 					}
-				} 				
+				}  				
 			}
 		} 
 	}
