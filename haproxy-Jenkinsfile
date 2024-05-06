@@ -180,7 +180,7 @@ pipeline {
 								def backend
 								def result
 
-								if(application =='ALL'||(application =='Siebel' && haproxyFromParam =='ALL' && backendFromParam=='ALL'&& backendServersFromParam =='ALL')){
+								if(application =='ALL'||(application =='Siebel' && haproxyFromParam =='ALL' && backendServersFromParam =='ALL')){
 									if(datacenter =='NCE'){
 										server = nceserver
 										backend =ncebackend
