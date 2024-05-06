@@ -6,33 +6,69 @@
 		"api-haproxy2-prod.nce.webapps.rr.com"
 	],
     "PHANTOM_NCE_SERVERS": 
-		"phantomprod0001",		
-		"phantomprod0002",		
-		"phantomprod0003",		
-		"phantomprod0004"
+		"phantomprod0001-7110",
+		"phantomprod0001-7112",
+		"phantomprod0001-7114",
+		"phantomprod0001-7116",
+		"phantomprod0001-7118",
+		"phantomprod0002-7110",
+		"phantomprod0002-7112",
+		"phantomprod0002-7114",
+		"phantomprod0002-7116",
+		"phantomprod0002-7118",
+		"phantomprod0003-7110",
+		"phantomprod0003-7112",
+		"phantomprod0003-7114",
+		"phantomprod0003-7116",
+		"phantomprod0003-7118",
+		"phantomprod0004-7110",
+		"phantomprod0004-7112",
+		"phantomprod0004-7114",
+		"phantomprod0004-7116",
+		"phantomprod0004-7118"
     ],
-    "PHANTOM_NCW_SERVERS": [
-		"phantomdr0001",		
-		"phantomdr0002",		
-		"phantomdr0003",		
-		"phantomdr0004" 
-	],
-   "UI_NCE_SERVERS": [
-		"phantomprod0003",
-        "phantomprod0004"
-	],
-  "UI_NCW_SERVERS": [
-		"phantomdr0003",          
-		"phantomdr0004"
-	],
 	
-	"PHANTOM_BACKEND_PORT": {
-		"www-phantom-jvm-ssl":[7110,7112,7114,7116,7118]
-    },
-	"UI_BACKEND_PORT": {
-		"www-phantom-ui-ssl":[7210],
-		"www-phantom-ui-nce-ssl":[7210],
-		"www-phantom-ui-ncw-ssl":[7210]
-    },
+    "PHANTOM_NCW_SERVERS": [
+		"phantomdr0001-7110",
+		"phantomdr0001-7112",
+		"phantomdr0001-7114",
+		"phantomdr0001-7116",
+		"phantomdr0001-7118",
+		"phantomdr0002-7110",
+		"phantomdr0002-7112",
+		"phantomdr0002-7114",
+		"phantomdr0002-7116",
+		"phantomdr0002-7118",
+		"phantomdr0003-7110",
+		"phantomdr0003-7112",
+		"phantomdr0003-7114",
+		"phantomdr0003-7116",
+		"phantomdr0003-7118",
+		"phantomdr0004-7110",
+		"phantomdr0004-7112",
+		"phantomdr0004-7114",
+		"phantomdr0004-7116",
+		"phantomdr0004-7118"
+	],
+	"PHANTOM_BACKEND":[
+		"www-phantom-jvm-ssl"
+	],
+	"UI_NCE_SERVERS": [
+		"phantomprod0003-7210",
+        "phantomprod0004-7210"
+	],
+	"UI_NCW_SERVERS": [
+		"phantomdr0003-7210",          
+		"phantomdr0004-7210"
+	],
+	"UI_NCE_BACKEND": [
+		"www-phantom-ui-ssl",
+		"www-phantom-ui-nce-ssl"
+	],
+
+	"UI_NCW_BACKEND": [
+		"www-phantom-ui-ssl",
+		"www-phantom-ui-ncw-ssl"
+	],
 	"SOCKFILE": "/data/apps/haproxy/haproxy_sock"
 }
