@@ -112,16 +112,16 @@ pipeline {
 								def server
 								def result =''
 
-								if(application =='ALL') {
-									if(application =='ALL'||(application =='GPD' && haproxyFromParam =='ALL' && backendFromParam=='ALL'&& backendServersFromParam =='ALL')){
-										 server = nceserver
-										 println "NCE server are: " + server
+								if(application =='ALL'||(application =='GPD' && haproxyFromParam =='ALL' && backendFromParam=='ALL'&& backendServersFromParam =='ALL')){
+									if(datacenter =='NCE'){
+										server = nceserver
+										println "NCE server are: " + server
 									}
 									else if(datacenter =='NCW'){
 										server = ncwserver
 										println "NCW server are: " + server
 									}
-								}	
+								}
 								else 
 								{	
 									HAProxyServers = haproxyFromParamArray
