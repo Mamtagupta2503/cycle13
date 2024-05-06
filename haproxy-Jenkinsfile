@@ -40,11 +40,12 @@ pipeline {
 								def backend = serverDetails.CSS_BACKENDS
 								def sockFileLoc = serverDetails.SOCKFILE
 								def result=''
-								//def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
-								//def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+								def backendFromParamArray =Arrays.asList((backendFromParam).split(","))
+								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
 								def server
 								
-								if(application =='ALL') {
+								if(application =='ALL'||(application =='ALL'&& haproxyFromParam =='ALL' && backendFromParam=='ALL'&& backendServersFromParam =='ALL')) {
 									if(datacenter =='NCE'){
 										 server = nceserver
 										 println "NCE server are: " + server
@@ -56,24 +57,27 @@ pipeline {
 								}	
 								else 
 								{	
-									//server = backendServersFromParamArray
-									//HAProxyServers = haproxyFromParamArray
-									//println "HAProxy server selected from parameter: " + haproxyFromParamArray
-									//println "backend server selected from parameter: " + server
+									server = backendServersFromParamArray
+									HAProxyServers = haproxyFromParamArray
+									backend = backendFromParam
+									println "HAProxy server selected from parameter: " + haproxyFromParamArray
+									println "backend server selected from parameter: " + server
+									println "backend selected from parameter: " + backend
+									
 									println "mamta"
 								}
 								
-								if(action=='Pre-Patching'||action=='DRAIN')
+								if(action=='Pre-Patching'||action=='drain')
 								{	
-									result = performAction(HAProxyServers, backend, server, 'DRAIN', sockFileLoc )
+									result = performAction(HAProxyServers, backend, server, 'drain', sockFileLoc )
 								}
-								else if(action =='Post-Patching'||action=='READY')
+								else if(action =='Post-Patching'||action=='ready')
 								{
-									result = performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
+									result = performAction(HAProxyServers, backend, server, 'ready', sockFileLoc )
 								}
-								else if(action =='MAINT')
+								else if(action =='maint')
 								{
-									result = performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
+									result = performAction(HAProxyServers, backend, server, 'maint', sockFileLoc )
 								}	
 								publishResults = publishResults + "CSS " + result+ "\n"									
 							}catch(Exception e) {
@@ -125,18 +129,18 @@ pipeline {
 									println "backend server selected from parameter: " + server*/
 									println "mamta"
 								}
-								if(action=='Pre-Patching'||action=='DRAIN')
+								if(action=='Pre-Patching'||action=='drain')
 									
 								{	
-									result =performAction(HAProxyServers, backend, server, 'DRAIN', sockFileLoc )
+									result =performAction(HAProxyServers, backend, server, 'drain', sockFileLoc )
 								}
-								else if(action=='Post-Patching'||action=='READY')
+								else if(action=='Post-Patching'||action=='ready')
 								{
-									result =performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
+									result =performAction(HAProxyServers, backend, server, 'ready', sockFileLoc )
 								}
-								else if(action =='MAINT')
+								else if(action =='maint')
 								{
-									result =performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
+									result =performAction(HAProxyServers, backend, server, 'maint', sockFileLoc )
 								}					
 								publishResults = publishResults + "GPD: " + result+ "\n"
 								
@@ -194,13 +198,13 @@ pipeline {
 									println "mamta"
 								}
 								
-								if(action=='Pre-Patching'||action=='MAINT')
+								if(action=='Pre-Patching'||action=='maint')
 									{	
-										result =performAction(HAProxyServers, backend, server, 'MAINT', sockFileLoc )
+										result =performAction(HAProxyServers, backend, server, 'maint', sockFileLoc )
 									}
-									else if(action=='Post-Patching'||action=='READY')
+									else if(action=='Post-Patching'||action=='ready')
 									{
-										result =performAction(HAProxyServers, backend, server, 'READY', sockFileLoc )
+										result =performAction(HAProxyServers, backend, server, 'ready', sockFileLoc )
 									}	
 									
 								publishResults = publishResults + "Siebel: " + result+ "\n"
