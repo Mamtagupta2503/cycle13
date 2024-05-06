@@ -57,12 +57,12 @@ pipeline {
 								}	
 								else 
 								{	
-									server = backendServersFromParamArray
 									HAProxyServers = haproxyFromParamArray
-									backend = backendFromParam
-									println "HAProxy server selected from parameter: " + haproxyFromParamArray
-									println "backend server selected from parameter: " + server
+									server = backendServersFromParamArray
+									backend = backendFromParamArray
+									println "HAProxy server selected from parameter: " + HAProxyServers
 									println "backend selected from parameter: " + backend
+									println "backend server selected from parameter: " + server
 									
 									println "mamta"
 								}
