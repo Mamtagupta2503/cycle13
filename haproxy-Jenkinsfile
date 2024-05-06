@@ -106,13 +106,14 @@ pipeline {
 								def ncwserver = serverDetails.GPD_NCW_SERVERS
 								def backend = serverDetails.GPD_BACKEND
 								def sockFileLoc = serverDetails.SOCKFILE
-								//def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
-								//def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+								def backendFromParamArray =Arrays.asList((backendFromParam).split(","))
+								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
 								def server
 								def result =''
 
 								if(application =='ALL') {
-									if(datacenter =='NCE'){
+									if(application =='ALL'||(application =='GPD' && haproxyFromParam =='ALL' && backendFromParam=='ALL'&& backendServersFromParam =='ALL')){
 										 server = nceserver
 										 println "NCE server are: " + server
 									}
@@ -123,11 +124,12 @@ pipeline {
 								}	
 								else 
 								{	
-									/*server = backendServersFromParamArray
 									HAProxyServers = haproxyFromParamArray
-									println "HAProxy server selected from parameter: " + haproxyFromParamArray
-									println "backend server selected from parameter: " + server*/
-									println "mamta"
+									server = backendServersFromParamArray
+									backend = backendFromParamArray
+									println "HAProxy server selected from parameter: " + HAProxyServers
+									println "backend selected from parameter: " + backend
+									println "backend server selected from parameter: " + server
 								}
 								if(action=='Pre-Patching'||action=='drain')
 									
@@ -171,13 +173,14 @@ pipeline {
 								def ncebackend= serverDetails.SIEBEL_NCE_BACKEND
 								def ncwbackend= serverDetails.SIEBEL_NCW_BACKEND
 								def sockFileLoc = serverDetails.SOCKFILE
-								//def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
-								//def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+								def backendFromParamArray =Arrays.asList((backendFromParam).split(","))
+								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
 								def server
 								def backend
 								def result
 
-								if(application =='ALL') {
+								if(application =='ALL'||(application =='Siebel' && haproxyFromParam =='ALL' && backendFromParam=='ALL'&& backendServersFromParam =='ALL')){
 									if(datacenter =='NCE'){
 										server = nceserver
 										backend =ncebackend
@@ -191,11 +194,12 @@ pipeline {
 								}
 								else 
 								{	
-									/*server = backendServersFromParamArray
 									HAProxyServers = haproxyFromParamArray
-									println "HAProxy server selected from parameter: " + haproxyFromParamArray
-									println "backend server selected from parameter: " + server*/
-									println "mamta"
+									server = backendServersFromParamArray
+									backend = backendFromParamArray
+									println "HAProxy server selected from parameter: " + HAProxyServers
+									println "backend selected from parameter: " + backend
+									println "backend server selected from parameter: " + server
 								}
 								
 								if(action=='Pre-Patching'||action=='maint')
@@ -239,15 +243,16 @@ pipeline {
 								def uincebackend =serverDetails.UI_NCE_BACKEND
 								def uincwbackend =serverDetails.UI_NCW_BACKEND
 								def sockFileLoc = serverDetails.SOCKFILE
-								//def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
-								//def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+								def backendFromParamArray =Arrays.asList((backendFromParam).split(","))
+								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
 								def phantomserver
 								def uiserver
 								def uibackend
 								def PhantomResult
 								def UIResult
 
-								if(application =='ALL') {
+								if(application =='ALL'||(application =='Phantom' && haproxyFromParam =='ALL' && backendFromParam=='ALL'&& backendServersFromParam =='ALL')){
 									if(datacenter =='NCE'){
 										phantomserver = nceserver
 										uiserver = uinceserver
@@ -265,11 +270,12 @@ pipeline {
 								}
 								else 
 								{	
-									/*server = backendServersFromParamArray
 									HAProxyServers = haproxyFromParamArray
-									println "HAProxy server selected from parameter: " + haproxyFromParamArray
-									println "backend server selected from parameter: " + server*/
-									println "mamta"
+									server = backendServersFromParamArray
+									backend = backendFromParamArray
+									println "HAProxy server selected from parameter: " + HAProxyServers
+									println "backend selected from parameter: " + backend
+									println "backend server selected from parameter: " + server
 								}
 								
 								if(action=='Pre-Patching'||action=='disable')
