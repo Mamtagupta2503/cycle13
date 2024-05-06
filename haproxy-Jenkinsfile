@@ -188,7 +188,7 @@ pipeline {
 									}
 									else if(datacenter =='NCW'){
 										server = ncwserver
-										backend =backend
+										backend =ncwbackend
 										println "NCW server: " + server + "NCW Backend: " + backend
 									}
 								}
@@ -285,7 +285,7 @@ pipeline {
 									}
 									else if(action=='Post-Patching'||action=='enable')
 									{
-										PhantomResult =performAction(HAProxyServers, backend, server, 'enable', sockFileLoc )
+										PhantomResult =performAction(HAProxyServers, phantomBackend, phantomserver, 'enable', sockFileLoc )
 										UIResult =performAction(HAProxyServers, uibackend, uiserver, 'enable', sockFileLoc )
 									}	
 									
