@@ -33,7 +33,7 @@ pipeline {
 						script{
 							try {
 								println "Performing "+ action +" on application CSS"								
-								def serverDetails = readJSON file: 'Patching_cycle_13/data/CSS.json'
+								def serverDetails = readJSON file: 'CSS.json'
 								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
 								def nceserver = serverDetails.CSS_NCE_SERVERS
 								def ncwserver = serverDetails.CSS_NCW_SERVERS
@@ -100,7 +100,7 @@ pipeline {
 						script{
 							try {
 								println "Performing "+ action +" on application GPD"								
-								def serverDetails = readJSON file: 'Patching_cycle_13/data/GPD.json'
+								def serverDetails = readJSON file: 'GPD.json'
 								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
 								def nceserver = serverDetails.GPD_NCE_SERVERS
 								def ncwserver = serverDetails.GPD_NCW_SERVERS
@@ -164,7 +164,7 @@ pipeline {
 						script{
 							try {
 								println "Performing "+ action +" on application Siebel"
-								def serverDetails = readJSON file: 'Patching_cycle_13/data/Siebel.json'
+								def serverDetails = readJSON file: 'Siebel.json'
 								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
 								def nceserver = serverDetails.SIEBEL_NCE_SERVERS
 								def ncwserver = serverDetails.SIEBEL_NCW_SERVERS
@@ -229,7 +229,7 @@ pipeline {
 						script{
 							try {
 								println "Performing "+ action +" on application Phantom"
-								def serverDetails = readJSON file: 'Patching_cycle_13/data/Phantom.json'
+								def serverDetails = readJSON file: 'Phantom.json'
 								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
 								def nceserver = serverDetails.PHANTOM_NCE_SERVERS
 								def ncwserver = serverDetails.PHANTOM_NCW_SERVERS
