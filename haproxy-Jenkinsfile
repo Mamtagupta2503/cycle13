@@ -381,7 +381,7 @@ def performActionOnSOM(Object haproxyservers, Object backendWithPort, Object ser
 def performActionOnSOMFromParam(Object haproxyservers, String backend, Object servers, Object port, String action, Object sockfileloc ){
 	def result ='Success'
 	def backend_server
-	def backend_server_list
+	def backend_server_list =[]
 	println "haproxyservers"+ haproxyservers
 	println "backend"+backend
 	println "servers"+servers
