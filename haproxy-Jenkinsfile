@@ -1,9 +1,9 @@
 def application =params.Application
 def action =params.Action
-def datacenter =params.DC
 def haproxyFromParam= params.haproxy
 def backendFromParam =params.backend
 def backendServersFromParam = params.backend_server
+def portFromParam =params.port
 def publishResults=''
 def cause = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')
 
@@ -14,29 +14,19 @@ pipeline {
 
 		stage('Parallel execution') {
 			parallel {
-				stage('Job parameters'){
-				steps {
-						script{
-							println "application : " + application
-							println "Action : " + action
-							println "datacenter : " + datacenter
-						}
-					}	
-				}
-				stage('CSS') {
+				stage('CSSNCW') {
 					when {
 						expression {
-						'CSS' in application||'ALL' in application
+						'CSSNCW' in application||'ALL' in application
 						}
 					}
 					steps {
 						script{
 							try {
-								println "Performing "+ action +" on application CSS"								
+								println "Performing "+ action +" on application CSSNCW"								
 								def serverDetails = readJSON file: 'CSS.json'
 								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
-								def nceserver = serverDetails.CSS_NCE_SERVERS
-								def ncwserver = serverDetails.CSS_NCW_SERVERS
+								def css_servers = serverDetails.CSS_NCW_SERVERS
 								def backend = serverDetails.CSS_BACKENDS
 								def sockFileLoc = serverDetails.SOCKFILE
 								def result=''
@@ -45,44 +35,31 @@ pipeline {
 								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
 								def server
 								
-								if(application =='ALL'||(application =='CSS' && haproxyFromParam =='ALL' && backendFromParam=='ALL'&& backendServersFromParam =='ALL')) {
-									if(datacenter =='NCE'){
-										 server = nceserver
-										 println "NCE server are: " + server
-									}
-									else if(datacenter =='NCW'){
-										server = ncwserver
-										println "NCW server are: " + server
-									}
-								}	
-								else 
-								{	
+								if(application =='CSSNCW') {
 									HAProxyServers = haproxyFromParamArray
-									server = backendServersFromParamArray
+									css_servers = backendServersFromParamArray
 									backend = backendFromParamArray
 									println "HAProxy server selected from parameter: " + HAProxyServers
 									println "backend selected from parameter: " + backend
-									println "backend server selected from parameter: " + server
-									
-									println "mamta"
+									println "backend server selected from parameter: " + css_servers
 								}
 								
 								if(action=='Pre-Patching'||action=='drain')
 								{	
-									result = performAction(HAProxyServers, backend, server, 'drain', sockFileLoc )
+									result = performAction(HAProxyServers, backend, css_servers, 'drain', sockFileLoc )
 								}
 								else if(action =='Post-Patching'||action=='ready')
 								{
-									result = performAction(HAProxyServers, backend, server, 'ready', sockFileLoc )
+									result = performAction(HAProxyServers, backend, css_servers, 'ready', sockFileLoc )
 								}
 								else if(action =='maint')
 								{
-									result = performAction(HAProxyServers, backend, server, 'maint', sockFileLoc )
+									result = performAction(HAProxyServers, backend, css_servers, 'maint', sockFileLoc )
 								}	
-								publishResults = publishResults + "CSS " + result+ "\n"									
+								publishResults = publishResults + "CSSNCW " + result+ "\n"									
 							}catch(Exception e) {
 								result ='Failed'
-								publishResults = publishResults + "CSS: " + result+ "\n"
+								publishResults = publishResults + "CSSNCW: " + result+ "\n"
 								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 								sh "exit 1"
 								}
@@ -90,65 +67,53 @@ pipeline {
 						}
 					}      
 				}
-				stage('GPD') {
+				stage('GPDNCW') {
 					when {
 						expression {
-						'GPD' in application||'ALL' in application
+						'GPDNCW' in application||'ALL' in application
 						}
 					}
 					steps {
 						script{
 							try {
-								println "Performing "+ action +" on application GPD"								
+								println "Performing "+ action +" on application GPDNCW"								
 								def serverDetails = readJSON file: 'GPD.json'
 								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
-								def nceserver = serverDetails.GPD_NCE_SERVERS
-								def ncwserver = serverDetails.GPD_NCW_SERVERS
+								def gpd_servers = serverDetails.GPD_NCW_SERVERS
 								def backend = serverDetails.GPD_BACKEND
 								def sockFileLoc = serverDetails.SOCKFILE
 								def backendFromParamArray =Arrays.asList((backendFromParam).split(","))
 								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
 								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
-								def server
 								def result =''
 
-								if(application =='ALL'||(application =='GPD' && haproxyFromParam =='ALL'&& backendServersFromParam =='ALL')){
-									if(datacenter =='NCE'){
-										server = nceserver
-										println "NCE server are: " + server
-									}
-									else if(datacenter =='NCW'){
-										server = ncwserver
-										println "NCW server are: " + server
-									}
-								}
-								else 
-								{	
+								if(application =='GPDNCW'){
 									HAProxyServers = haproxyFromParamArray
-									server = backendServersFromParamArray
+									gpd_servers = backendServersFromParamArray
 									backend = backendFromParamArray
 									println "HAProxy server selected from parameter: " + HAProxyServers
 									println "backend selected from parameter: " + backend
-									println "backend server selected from parameter: " + server
+									println "backend server selected from parameter: " + gpd_servers
 								}
+								
 								if(action=='Pre-Patching'||action=='drain')
 									
 								{	
-									result =performAction(HAProxyServers, backend, server, 'drain', sockFileLoc )
+									result =performAction(HAProxyServers, backend, gpd_servers, 'drain', sockFileLoc )
 								}
 								else if(action=='Post-Patching'||action=='ready')
 								{
-									result =performAction(HAProxyServers, backend, server, 'ready', sockFileLoc )
+									result =performAction(HAProxyServers, backend, gpd_servers, 'ready', sockFileLoc )
 								}
 								else if(action =='maint')
 								{
-									result =performAction(HAProxyServers, backend, server, 'maint', sockFileLoc )
+									result =performAction(HAProxyServers, backend, gpd_server, 'maint', sockFileLoc )
 								}					
-								publishResults = publishResults + "GPD: " + result+ "\n"
+								publishResults = publishResults + "GPDNCW: " + result+ "\n"
 								
 							}catch(Exception e) {
 								result ='Failed'
-								publishResults = publishResults + "GPD: " + result+ "\n"
+								publishResults = publishResults + "GPDNCW: " + result+ "\n"
 								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 								sh "exit 1"
 								}
@@ -156,66 +121,48 @@ pipeline {
 						}
 					}      
 				}
-				stage('Siebel') {
+				stage('SiebelNCW') {
 					when {
 						expression {
-						'Siebel' in application||'ALL' in application
+						'SiebelNCW' in application||'ALL' in application
 						}
 					}
 					steps {
 						script{
 							try {
-								println "Performing "+ action +" on application Siebel"
+								println "Performing "+ action +" on application SiebelNCW"
 								def serverDetails = readJSON file: 'Siebel.json'
 								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
-								def nceserver = serverDetails.SIEBEL_NCE_SERVERS
-								def ncwserver = serverDetails.SIEBEL_NCW_SERVERS
-								def ncebackend= serverDetails.SIEBEL_NCE_BACKEND
-								def ncwbackend= serverDetails.SIEBEL_NCW_BACKEND
+								def siebel_servers = serverDetails.SIEBEL_NCW_SERVERS
+								def siebel_backend= serverDetails.SIEBEL_NCW_BACKEND
 								def sockFileLoc = serverDetails.SOCKFILE
 								def backendFromParamArray =Arrays.asList((backendFromParam).split(","))
 								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
 								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
-								def server
-								def backend
 								def result
 
-								if(application =='ALL'||(application =='Siebel' && haproxyFromParam =='ALL' && backendServersFromParam =='ALL')){
-									if(datacenter =='NCE'){
-										server = nceserver
-										backend =ncebackend
-										println "NCE server: " + server + "NCE Backend: " + backend
-									}
-									else if(datacenter =='NCW'){
-										server = ncwserver
-										backend =ncwbackend
-										println "NCW server: " + server + "NCW Backend: " + backend
-									}
-								}
-								else 
-								{	
+								if(application =='SiebelNCW'){
 									HAProxyServers = haproxyFromParamArray
-									server = backendServersFromParamArray
-									backend = backendFromParamArray
+									siebel_servers = backendServersFromParamArray
+									siebel_backend = backendFromParamArray
 									println "HAProxy server selected from parameter: " + HAProxyServers
-									println "backend selected from parameter: " + backend
-									println "backend server selected from parameter: " + server
-								}
-								
+									println "backend selected from parameter: " + siebel_backend
+									println "backend server selected from parameter: " + siebel_servers
+								}								
 								if(action=='Pre-Patching'||action=='maint')
 									{	
-										result =performAction(HAProxyServers, backend, server, 'maint', sockFileLoc )
+										result =performAction(HAProxyServers, siebel_backend, siebel_servers, 'maint', sockFileLoc )
 									}
 									else if(action=='Post-Patching'||action=='ready')
 									{
-										result =performAction(HAProxyServers, backend, server, 'ready', sockFileLoc )
+										result =performAction(HAProxyServers, siebel_backend, siebel_servers, 'ready', sockFileLoc )
 									}	
 									
-								publishResults = publishResults + "Siebel: " + result+ "\n"
+								publishResults = publishResults + "SiebelNCW: " + result+ "\n"
 								
 							}catch(Exception e) {
 								result ='Failed'
-								publishResults = publishResults + "Siebel: " + result+ "\n"
+								publishResults = publishResults + "SiebelNCW: " + result+ "\n"
 								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 									sh "exit 1"
 								}
@@ -223,64 +170,48 @@ pipeline {
 						}      
 					}
 				}
-				stage('Phantom') {
+				stage('PhantomNCW') {
 					when {
 						expression {
-						'Phantom' in application||'ALL' in application
+						'PhantomNCW' in application||'ALL' in application
 						}
 					}
 					steps {
 						script{
 							try {
-								println "Performing "+ action +" on application Phantom"
+								println "Performing "+ action +" on application PhantomNCW"
 								def serverDetails = readJSON file: 'Phantom.json'
 								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
-								def nceserver = serverDetails.PHANTOM_NCE_SERVERS
-								def ncwserver = serverDetails.PHANTOM_NCW_SERVERS
-								def phantomBackend =serverDetails.PHANTOM_BACKEND
+								def phantom_servers = serverDetails.PHANTOM_NCW_SERVERS
+								def phantom_backend =serverDetails.PHANTOM_BACKEND
 								def sockFileLoc = serverDetails.SOCKFILE
 								def backendFromParamArray =Arrays.asList((backendFromParam).split(","))
 								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
 								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
-								def phantomserver
 								def PhantomResult
 								
-								if(application =='ALL'||(application =='Phantom' && haproxyFromParam =='ALL' && backendFromParam=='ALL'&& backendServersFromParam =='ALL')){
-									if(datacenter =='NCE'){
-										phantomserver = nceserver
-										println "NCE server: " + phantomserver 
-										
-
-									}
-									else if(datacenter =='NCW'){
-										phantomserver = ncwserver
-										println "NCW server: " + phantomserver
-									}
-								}
-								else 
-								{	
+								if(application =='PhantomNCW'){
 									HAProxyServers = haproxyFromParamArray
-									server = backendServersFromParamArray
+									phantom_servers = backendServersFromParamArray
 									backend = backendFromParamArray
 									println "HAProxy server selected from parameter: " + HAProxyServers
 									println "backend selected from parameter: " + backend
-									println "backend server selected from parameter: " + server
-								}
-								
+									println "backend server selected from parameter: " + phantom_servers
+								}								
 								if(action=='Pre-Patching'||action=='disable')
 									{	
-										PhantomResult =performAction(HAProxyServers, phantomBackend, phantomserver, 'disable', sockFileLoc )
+										PhantomResult =performAction(HAProxyServers, phantom_backend, phantom_servers, 'disable', sockFileLoc )
 									}
 									else if(action=='Post-Patching'||action=='enable')
 									{
-										PhantomResult =performAction(HAProxyServers, phantomBackend, phantomserver, 'enable', sockFileLoc )
+										PhantomResult =performAction(HAProxyServers, phantom_backend, phantom_servers, 'enable', sockFileLoc )
 									}	
 									
-								publishResults = publishResults + "Phantom: " + PhantomResult+ "\n"
+								publishResults = publishResults + "PhantomNCW: " + PhantomResult+ "\n"
 								
 							}catch(Exception e) {
 								PhantomResult ='Failed'
-								publishResults = publishResults + "Phantom: " + PhantomResult+ "\n"
+								publishResults = publishResults + "PhantomNCW: " + PhantomResult+ "\n"
 								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 									sh "exit 1"
 								}
@@ -288,75 +219,107 @@ pipeline {
 						}      
 					}
 				}
-				stage('Phantom UI') {
+				stage('Phantom UI NCW') {
 					when {
 						expression {
-						'PhantomUI' in application||'ALL' in application
+						'PhantomUINCW' in application||'ALL' in application
 						}
 					}
 					steps {
 						script{
 							try {
-								println "Performing "+ action +" on application PhantomUI"
+								println "Performing "+ action +" on application PhantomUINCW"
 								def serverDetails = readJSON file: 'Phantom.json'
 								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
-								def uinceserver = serverDetails.UI_NCE_SERVERS
-								def uincwserver = serverDetails.UI_NCW_SERVERS
-								def uincebackend =serverDetails.UI_NCE_BACKEND
-								def uincwbackend =serverDetails.UI_NCW_BACKEND
+								def phantom_ui_servers = serverDetails.UI_NCW_SERVERS
+								def phantom_ui_backend =serverDetails.UI_NCW_BACKEND
 								def sockFileLoc = serverDetails.SOCKFILE
 								def backendFromParamArray =Arrays.asList((backendFromParam).split(","))
 								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
 								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
-								def uiserver
-								def uibackend
 								def UIResult
 
-								if(application =='ALL'||(application =='PhantomUI' && haproxyFromParam =='ALL' && backendFromParam=='ALL'&& backendServersFromParam =='ALL')){
-									if(datacenter =='NCE'){
-										uiserver = uinceserver
-										uibackend =uincebackend
-										println "Phantom UI NCE Server: " + uiserver + "UI NCE Backend: " +uibackend
-										
-
-									}
-									else if(datacenter =='NCW'){
-										uiserver = uincwserver
-										uibackend =uincwbackend
-										println "Phantom UI NCW Server: " + uiserver + "UI NCW Backend: " +uibackend
-									}
-								}
-								else 
-								{	
+								if(application =='PhantomUINCW'){
 									HAProxyServers = haproxyFromParamArray
-									server = backendServersFromParamArray
-									backend = backendFromParamArray
+									phantom_ui_servers = backendServersFromParamArray
+									phantom_ui_backend = backendFromParamArray
 									println "HAProxy server selected from parameter: " + HAProxyServers
 									println "backend selected from parameter: " + backend
-									println "backend server selected from parameter: " + server
-								}
+									println "backend server selected from parameter: " + phantom_ui_servers
 								
+								}								
 								if(action=='Pre-Patching'||action=='disable')
 									{	
-										UIResult =performAction(HAProxyServers, uibackend, uiserver, 'disable', sockFileLoc )
+										UIResult =performAction(HAProxyServers, phantom_ui_backend, phantom_ui_servers, 'disable', sockFileLoc )
 									}
 									else if(action=='Post-Patching'||action=='enable')
 									{
-										UIResult =performAction(HAProxyServers, uibackend, uiserver, 'enable', sockFileLoc )
+										UIResult =performAction(HAProxyServers, phantom_ui_backend, phantom_ui_servers, 'enable', sockFileLoc )
 									}	
 									
-								publishResults = publishResults + "Phantom UI: " + UIResult+ "\n"
+								publishResults = publishResults + "Phantom UI NCW: " + UIResult+ "\n"
 								
 							}catch(Exception e) {
 								UIResult ='Failed'
-								publishResults = publishResults + "Phantom: " + UIResult+ "\n"
+								publishResults = publishResults + "Phantom UI NCW: " + UIResult+ "\n"
 								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
 									sh "exit 1"
 								}
 							}
 						}      
 					}
-				}  				
+				}  
+				stage('SOMDR') {
+					when {
+						expression {
+						'SOMDR' in application
+						}
+					}
+					steps {
+						script{
+							try {
+								println "Performing "+ action +" on application SOMDR"								
+								def serverDetails = readJSON file: 'SOM.json'
+								println "read success"
+								def HAProxyServers = serverDetails.HAPROXY_SERVERS 
+								def som_servers = serverDetails.SOM_NCW_SERVERS
+								def backendWithPort = serverDetails.BACKEND_PORT
+								def sockFileLoc = serverDetails.SOCKFILE
+								def som_global_lead_mgmt_server= serverDetails.SOM_GLOBAL_LEAD_MANAGEMENT_NCW_SERVERS
+								def backendPortGlobalLeadMGMT = serverDetails.BACKEND_PORT_SOM_GLOBAL_LEAD_MANAGEMENT
+								def haproxyFromParamArray =Arrays.asList((haproxyFromParam).split(","))
+								def backendFromParamArray =Arrays.asList((backendFromParam).split(","))
+								def backendServersFromParamArray = Arrays.asList((backendServersFromParam).split(","))
+								def portFromParamArray = Arrays.asList((portFromParam).split(","))
+								def SOMResult
+								def SOMGlobalLeadResult
+								
+								if(application =='SOMDR' && haproxyFromParamArray.contains("ALL") && backendFromParamArray.contains("ALL") && backendServersFromParamArray.contains("ALL")) {
+									SOMResult = performActionOnSOM(HAProxyServers, backendWithPort, som_servers, 'disable', sockFileLoc )
+									publishResults = publishResults + "SOMDR: " + SOMResult+ "\n"
+									SOMGlobalLeadResult = performActionOnSOM(HAProxyServers, backendPortGlobalLeadMGMT, som_global_lead_mgmt_server, 'disable', sockFileLoc )
+									publishResults = publishResults + "SOM GLOBAL LEAD: " + SOMGlobalLeadResult+ "\n"
+								}	
+								else 
+								{	
+									performActionOnSOMFromParam(haproxyFromParamArray,backendFromParam,backendServersFromParamArray,portFromParamArray,'disable', sockFileLoc)	
+									//publishResults = publishResults + "SOMDR: " + SOMResult+ "\n"
+								}
+							
+							
+						//def SOMResult = performActionOnSOM(HAProxyServers, backendWithPort, som_servers, action, sockFileLoc )				
+						//publishResults = publishResults + "SOMDR: " + SOMResult+ "\n"
+
+							}catch(Exception e) {
+								SOMResult ='Failed'
+								publishResults = publishResults + "SOMDR: " + SOMResult+ "\n"
+								catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+								sh "exit 1"
+								}
+							}
+						}
+					}      
+				}
 			}
 		} 
 	}
@@ -393,4 +356,52 @@ def performAction(Object HAProxyServers, Object backend, Object server, String a
 	}
 	return result
 }
-
+def performActionOnSOM(Object haproxyservers, Object backendWithPort, Object server, String action, Object sockfileloc ){
+	def result ='Success'
+	def backend
+	def portarray
+	println "mamta"
+	for(ha in haproxyservers) {
+		def SSH_OPTION="ssh jenkins_worker@${ha} -o StrictHostKeyChecking=no"
+		for(def bwp in backendWithPort)
+		{
+			backend =bwp.key
+			for(port in bwp.value)
+				{
+					for(s in server) {
+						println "$SSH_OPTION  -o LogLevel=error 'echo $action server $backend/$s-$port | sudo socat stdio $sockfileloc'"
+						//ssh "$SSH_OPTION  -o LogLevel=error 'echo $action server $backend/$s-$port | sudo socat stdio $sockfileloc'"
+					}
+				}
+			
+		}
+	}
+	return result
+}
+def performActionOnSOMFromParam(Object haproxyservers, String backend, Object servers, Object port, String action, Object sockfileloc ){
+	def result ='Success'
+	def backend_server
+	def backend_server_list
+	println "haproxyservers"+ haproxyservers
+	println "backend"+backend
+	println "servers"+servers
+	println "port "+ port
+	
+	for(server in servers)
+	{
+		for(p in port){
+			backend_server =server + '-' +p
+			backend_server_list.add(backend_server)
+			
+		}
+	}
+	println backend_server_list
+	for(ha in haproxyservers) {
+		def SSH_OPTION="ssh jenkins_worker@${ha} -o StrictHostKeyChecking=no"
+		for(server in backend_server_list) {
+			println "$SSH_OPTION  -o LogLevel=error 'echo $action server $backend/$server | sudo socat stdio $sockfileloc'"
+			//ssh "$SSH_OPTION  -o LogLevel=error 'echo $action server $backend/$server | sudo socat stdio $sockfileloc'"
+		}		
+	}
+	return result
+}
